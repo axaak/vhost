@@ -9,4 +9,4 @@ To use:
 4) Enter website domain info when prompted
 
 Whilst you can re-run this script it will not remove the user you created in previous runs.
-You will need ot create a new user or manually remove the user.
+You will need to create a new user or manually remove the user.
