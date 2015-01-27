@@ -3,7 +3,7 @@ DocumentRoot /home/username/domain_name/htdocs
 ServerName domain_name
 <Directory "/home/username/domain_name/htdocs">
 allow from all
-Options +Indexes
+Options -Indexes
 </Directory>
 ServerAlias domain_name
 ErrorLog /home/username/domain_name/logs/error_log
