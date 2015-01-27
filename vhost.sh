@@ -181,7 +181,14 @@ EOF
 	fi
 	scp $username@$hostname:$pathname/deploy.sql.gz ./
 	gunzip deploy.sql.gz
-	echo "Fetched db, fetching htdocs ..."
+	echo "creating database, enter mysql root password:"
+	mysql -uroot -e "create database $username" -p
+	read -p "Enter local database password for $username>" db_pwd
+	echo "creating database user, enter mysql root password:"
+	mysql -uroot -e "grant all on $username.* to $username identified by '$db_pwd' " -p
+	#echo "Loading db dump file, enter db password:"
+	mysql -u $username -p $db_pwd $username < deploy.sql
+	echo "Populated db, fetching htdocs ..."
 
 	scp $username@$hostname:$pathname/htdocs.tar.gz ./
 	exit
