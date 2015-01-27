@@ -27,7 +27,7 @@ else
 	ServerName domain_name
 	<Directory "/home/username/domain_name/htdocs">
 	allow from all
-	Options +Indexes
+	Options -Indexes
 	</Directory>
 	ServerAlias domain_name
 	ErrorLog /home/username/domain_name/logs/error_log
@@ -71,13 +71,16 @@ fi
 			mkdir $domain_name/htdocs
 			mkdir $domain_name/logs
 			mkdir $domain_name/files
+			mkdir $domain_name/files/deploy
 		fi
 		chown -R $username $domain_name/htdocs
 		chown -R $username $domain_name/files
+		chown -R $username $domain_name/files/deploy
 	else
 		echo "Exit no domain entered"
 		exit
 	fi
+	cd $domain_name/files/deploy
 	################################################
 	### Grab the model vhost .conf file & edit it
 	################################################
@@ -130,5 +133,56 @@ EOF
 		echo "$model_path$model_file does not exist but is required."
 		exit;
 	fi
+	################################################
+	### Continue on to deploy a site?
+	################################################
 
+	read -p "Deploy from a remote site? (Assumes you've run package_for_deployment.sh
+	at the remote end)Y/n>" deploy
+	if [ $deploy = "Y" ]
+			then
+			echo "Deploy ..."
+	else 
+			echo "Done."
+			exit
+	fi
+	################################################
+	### Get the remote username
+	################################################
+	read -p "Enter remote username>" username
+	if [ -n "$username" ]
+			then
+			echo $username
+	else 
+			echo "Exit no remote username entered"
+			exit
+	fi
+	################################################
+	### Get the remote hostname
+	################################################
+	read -p "Enter remote hostname>" hostname
+	if [ -n "$hostname" ]
+			then
+			echo $hostname
+	else 
+			echo "Exit no remote hostname entered"
+			exit
+	fi
+	################################################
+	### Get the remote pathname
+	################################################
+	read -p "Enter remote pathname>" pathname
+	if [ -n "$pathname" ]
+			then
+			echo $pathname
+	else 
+			echo "Exit no remote pathname entered"
+			exit
+	fi
+	scp $username@$hostname:$pathname/deploy.sql.gz ./
+	gunzip deploy.sql.gz
+	echo "Fetched db, fetching htdocs ..."
+
+	scp $username@$hostname:$pathname/htdocs.tar.gz ./
+	exit
 
